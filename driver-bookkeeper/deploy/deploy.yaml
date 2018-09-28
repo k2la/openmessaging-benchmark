@@ -57,7 +57,7 @@
     - set_fact:
         zookeeperServers: "{{ groups['zookeeper']|map('extract', hostvars, ['ansible_default_ipv4', 'address'])|map('regex_replace', '(.*)', '\\1:2181') | join(',') }}"
         serviceUrl: "pulsar://{{ hostvars[groups['bookkeeper'][0]].private_ip }}:6650/"
-        httpUrl: "http://{{ hostvars[groups['bookkeeper'][0]].private_ip }}:8080/"
+        webServiceUrl: "http://{{ hostvars[groups['bookkeeper'][0]].private_ip }}:8080/"
         dlogUri: "distributedlog://{{ groups['zookeeper']|map('extract', hostvars, ['ansible_default_ipv4', 'address'])|map('regex_replace', '(.*)', '\\1:2181') | join(',') }}/streams"
         pulsarVersion: "2.0.0-incubating-SNAPSHOT"
     - file: path=/opt/pulsar state=absent
@@ -114,7 +114,7 @@
         bin/pulsar initialize-cluster-metadata --cluster local
         --zookeeper localhost:2181
         --global-zookeeper localhost:2181
-        --web-service-url {{ httpUrl }}
+        --web-service-url {{ webServiceUrl }}
         --broker-service-url {{ serviceUrl }}
       args:
         chdir: /opt/pulsar

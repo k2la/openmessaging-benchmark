@@ -23,7 +23,7 @@ import org.apache.pulsar.common.naming.TopicDomain;
 public class PulsarClientConfig {
     public String serviceUrl;
 
-    public String httpUrl;
+    public String webServiceUrl;
 
     public int ioThreads = 8;
 
@@ -35,11 +35,20 @@ public class PulsarClientConfig {
 
     public PersistenceConfiguration persistence = new PersistenceConfiguration();
 
+    public boolean tlsEnabled = false;
+
+    public AuthenticationConfiguration authentication = new AuthenticationConfiguration();
+
     public static class PersistenceConfiguration {
         public int ensembleSize = 3;
         public int writeQuorum = 3;
         public int ackQuorum = 2;
 
         public boolean deduplicationEnabled = false;
+    }
+
+    public static class AuthenticationConfiguration {
+        public String plugin;
+        public String data;
     }
 }

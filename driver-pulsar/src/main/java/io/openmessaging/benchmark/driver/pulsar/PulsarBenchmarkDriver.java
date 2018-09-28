@@ -71,13 +71,18 @@ public class PulsarBenchmarkDriver implements BenchmarkDriver {
         log.info("Pulsar driver configuration: {}", writer.writeValueAsString(config));
         client = PulsarClient.builder().ioThreads(config.client.ioThreads)
                         .connectionsPerBroker(config.client.connectionsPerBroker).statsInterval(0, TimeUnit.SECONDS)
+                        .enableTls(config.client.tlsEnabled)
+                        .authentication(config.client.authentication.plugin, config.client.authentication.data)
                         .serviceUrl(config.client.serviceUrl).build();
 
         log.info("Created Pulsar client for service URL {}", config.client.serviceUrl);
 
-        adminClient = PulsarAdmin.builder().serviceHttpUrl(config.client.httpUrl).build();
+        adminClient = PulsarAdmin.builder()
+                        .serviceHttpUrl(config.client.webServiceUrl)
+                        .authentication(config.client.authentication.plugin, config.client.authentication.data)
+                        .build();
 
-        log.info("Created Pulsar admin client for HTTP URL {}", config.client.httpUrl);
+        log.info("Created Pulsar admin client for HTTP URL {}", config.client.webServiceUrl);
 
         producerBuilder = client.newProducer().enableBatching(config.producer.batchingEnabled)
                         .batchingMaxPublishDelay(config.producer.batchingMaxPublishDelayMs, TimeUnit.MILLISECONDS)

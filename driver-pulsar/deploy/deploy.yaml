@@ -57,7 +57,7 @@
     - set_fact:
         zookeeperServers: "{{ groups['zookeeper']|map('extract', hostvars, ['ansible_default_ipv4', 'address'])|map('regex_replace', '(.*)', '\\1:2181') | join(',') }}"
         serviceUrl: "pulsar://{{ hostvars[groups['pulsar'][0]].private_ip }}:6650/"
-        httpUrl: "http://{{ hostvars[groups['pulsar'][0]].private_ip }}:8080/"
+        webServiceUrl: "http://{{ hostvars[groups['pulsar'][0]].private_ip }}:8080/"
         pulsarVersion: "1.22.0-incubating"
     - file: path=/opt/pulsar state=absent
     - file: path=/opt/pulsar state=directory
@@ -113,7 +113,7 @@
         bin/pulsar initialize-cluster-metadata --cluster local
         --zookeeper localhost:2181
         --global-zookeeper localhost:2181
-        --web-service-url {{ httpUrl }}
+        --web-service-url {{ webServiceUrl }}
         --broker-service-url {{ serviceUrl }}
       args:
         chdir: /opt/pulsar
@@ -197,8 +197,8 @@
     - name: Configure http URL
       lineinfile:
          dest: '{{ item }}'
-         regexp: '^  httpUrl: '
-         line: '  httpUrl: {{ httpUrl }}'
+         regexp: '^  webServiceUrl: '
+         line: '  webServiceUrl: {{ webServiceUrl }}'
       with_items: '{{ drivers_list.stdout_lines }}'
     - name: Configure memory
       lineinfile:
